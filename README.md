@@ -1,2 +1,3 @@
 # VulkanStudy
-this tis VulkanStudy code
+this is VulkanStudy code
+
