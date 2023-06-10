@@ -1,6 +1,6 @@
 #pragma once
 
-#include "lve_device.cpp"
+#include "lve_device.hpp"
 
 //std
 #include <string>
@@ -15,7 +15,7 @@ namespace lve {
 
 	public:
 		LvePipeline(
-			MyEngineDevice& device,
+			LveDevice& device,
 			const std::string& vertFilepath,
 			const std::string& fragFilepath,
 			const PipelineConfigInfo& configInfo);
@@ -36,7 +36,7 @@ namespace lve {
 
 		void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule);
 
-		MyEngineDevice& LveDevice;
+		LveDevice& lveDevice;
 		VkPipeline graphicPipeline;
 		VkShaderModule vertShaderModule;
 		VkShaderModule fragShaderModule;

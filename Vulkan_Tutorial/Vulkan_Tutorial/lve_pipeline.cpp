@@ -6,11 +6,15 @@
 #include <iostream>
 
 namespace lve {
+	
 	// init
-	LvePipeline::LvePipeline(MyEngineDevice& device,const std::string& vertFilepath,const std::string& fragFilepath,const PipelineConfigInfo& configInfo) : LveDevice{device}
+
+
+	LvePipeline::LvePipeline(LveDevice& device,const std::string& vertFilepath,const std::string& fragFilepath,const PipelineConfigInfo& configInfo) : lveDevice{device}
 	{
 		createGraphicsPipeline(vertFilepath, fragFilepath, configInfo);
 	}
+
 
 
 	PipelineConfigInfo LvePipeline::defaultPipelineConfigInfo(uint32_t width, uint32_t height)
@@ -57,7 +61,7 @@ namespace lve {
 		createInfo.codeSize = code.size(); //vector array의 code size
 		createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data()); //우리가 쓸 코드의 포인터 주소 uint32_t int32랑 다르다. c stayle character array 쓰지말것
 
-		if (vkCreateShaderModule(LveDevice.device(), &createInfo, nullptr, shaderModule) != VK_SUCCESS)
+		if (vkCreateShaderModule(lveDevice.device(), &createInfo, nullptr, shaderModule) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create shader module");
 		}
