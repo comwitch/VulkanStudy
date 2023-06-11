@@ -32,7 +32,7 @@ namespace lve {
 			const std::string& vertFilepath,
 			const std::string& fragFilepath,
 			const PipelineConfigInfo& configInfo);
-		~LvePipeline() {}
+		~LvePipeline();
 
 		LvePipeline(const LvePipeline&) = delete;
 		void operator=(const LvePipeline&) = delete;
@@ -50,7 +50,7 @@ namespace lve {
 		void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule);
 
 		LveDevice& lveDevice;
-		VkPipeline graphicPipeline;
+		VkPipeline graphicsPipeline;
 		VkShaderModule vertShaderModule;
 		VkShaderModule fragShaderModule;
 

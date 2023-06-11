@@ -4,6 +4,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <iostream>
+#include <cassert>
 
 namespace lve {
 	
@@ -13,6 +14,13 @@ namespace lve {
 	LvePipeline::LvePipeline(LveDevice& device,const std::string& vertFilepath,const std::string& fragFilepath,const PipelineConfigInfo& configInfo) : lveDevice{device}
 	{
 		createGraphicsPipeline(vertFilepath, fragFilepath, configInfo);
+	}
+
+	LvePipeline::~LvePipeline()
+	{
+		vkDestroyShaderModule(lveDevice.device(), vertShaderModule, nullptr);
+		vkDestroyShaderModule(lveDevice.device(), fragShaderModule, nullptr);
+		vkDestroyPipeline(lveDevice.device(), graphicsPipeline, nullptr);
 	}
 
 
@@ -125,6 +133,13 @@ namespace lve {
 
 	void LvePipeline::createGraphicsPipeline(const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo& configInfo)
 	{
+		assert(
+			configInfo.pipelineLayout != VK_NULL_HANDLE &&
+			"Cannot create graphics pipeline: no pipelineLayout provided in configInfo");
+		assert(
+			configInfo.renderPass != VK_NULL_HANDLE &&
+			"Cannot create graphics pipeline: no renderPass provided in configInfo");
+
 		auto vertCode = readFile(vertFilepath);
 		auto fragCode = readFile(fragFilepath);
 
@@ -150,11 +165,40 @@ namespace lve {
 		shaderStages[1].pNext = nullptr;
 		shaderStages[1].pSpecializationInfo = nullptr;
 
+		//vertex input info
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+		vertexInputInfo.vertexAttributeDescriptionCount = 0;
+		vertexInputInfo.vertexBindingDescriptionCount = 0;
+		vertexInputInfo.pVertexAttributeDescriptions = nullptr;
+		vertexInputInfo.pVertexBindingDescriptions = nullptr;
 
+		//whole things.
+		VkGraphicsPipelineCreateInfo pipelineInfo{};
+		pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		pipelineInfo.stageCount = 2;
+		pipelineInfo.pStages = shaderStages;
+		pipelineInfo.pVertexInputState = &vertexInputInfo;
+		pipelineInfo.pInputAssemblyState = &configInfo.inputAssemblyInfo;
+		pipelineInfo.pViewportState = &configInfo.viewportInfo;
+		pipelineInfo.pRasterizationState = &configInfo.rasterizationInfo;
+		pipelineInfo.pMultisampleState = &configInfo.multisampleInfo;
+		pipelineInfo.pColorBlendState = &configInfo.colorBlendInfo;
+		pipelineInfo.pDepthStencilState = &configInfo.depthStencilInfo;
+		pipelineInfo.pDynamicState = nullptr;
 
-		
+		pipelineInfo.layout = configInfo.pipelineLayout;
+		pipelineInfo.renderPass = configInfo.renderPass;
+		pipelineInfo.subpass = configInfo.subpass;
+
+		pipelineInfo.basePipelineIndex = -1;
+		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+
+		if (vkCreateGraphicsPipelines(lveDevice.device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS)
+		{
+			throw std::runtime_error("tuna tuna : failed to create");
+		}
+
 
 	}
 
