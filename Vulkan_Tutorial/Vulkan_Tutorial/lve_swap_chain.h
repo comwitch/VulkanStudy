@@ -11,15 +11,15 @@
 
 namespace lve {
 
-    class lveSwapChain {
+    class LveSwapChain {
     public:
         static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
-        lveSwapChain(LveDevice& deviceRef, VkExtent2D windowExtent);
-        ~lveSwapChain();
+        LveSwapChain(LveDevice& deviceRef, VkExtent2D windowExtent);
+        ~LveSwapChain();
 
-        lveSwapChain(const lveSwapChain&) = delete;
-        void operator=(const lveSwapChain&) = delete;
+        LveSwapChain(const LveSwapChain&) = delete;
+        void operator=(const LveSwapChain&) = delete;
 
         VkFramebuffer getFrameBuffer(int index) { return swapChainFramebuffers[index]; }
         VkRenderPass getRenderPass() { return renderPass; }
