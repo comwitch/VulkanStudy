@@ -1,25 +1,25 @@
 #pragma once
 
-#include "lve_window.h"
-#include "lve_pipeline.h"
 #include "lve_device.hpp"
+#include "lve_pipeline.h"
 #include "lve_swap_chain.h"
+#include "lve_window.h"
 
+// std
 #include <memory>
 #include <vector>
 
 namespace lve {
-	class First_app
-	{
+	class FirstApp {
 	public:
 		static constexpr int WIDTH = 800;
 		static constexpr int HEIGHT = 600;
 
-		First_app();
-		~First_app();
+		FirstApp();
+		~FirstApp();
 
-		First_app(const First_app&) = delete;
-		First_app& operator=(const First_app&) = delete;
+		FirstApp(const FirstApp&) = delete;
+		FirstApp& operator=(const FirstApp&) = delete;
 
 		void run();
 
@@ -29,15 +29,11 @@ namespace lve {
 		void createCommandBuffers();
 		void drawFrame();
 
-		LveWindow LveWindow{ WIDTH, HEIGHT, "Hello Vulkan!!" };
-		LveDevice LveDevice{ LveWindow };
-		lveSwapChain lveSwapChain{ LveDevice, LveWindow.getExtent() };
+		LveWindow lveWindow{ WIDTH, HEIGHT, "Hello Vulkan!" };
+		LveDevice lveDevice{ lveWindow };
+		LveSwapChain lveSwapChain{ lveDevice, lveWindow.getExtent() };
 		std::unique_ptr<LvePipeline> lvePipeline;
 		VkPipelineLayout pipelineLayout;
 		std::vector<VkCommandBuffer> commandBuffers;
-		
 	};
-
-
-}//namespace lve
-
+}  // namespace lve
