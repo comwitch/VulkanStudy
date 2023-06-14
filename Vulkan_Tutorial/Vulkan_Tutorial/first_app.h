@@ -4,6 +4,7 @@
 #include "lve_pipeline.h"
 #include "lve_swap_chain.h"
 #include "lve_window.h"
+#include "lve_model.h"
 
 // std
 #include <memory>
@@ -24,10 +25,12 @@ namespace lve {
 		void run();
 
 	private:
+		void loadModels();
 		void createPipelineLayout();
 		void createPipeline();
 		void createCommandBuffers();
 		void drawFrame();
+		std::vector<LveModel::Vertex> makeSierpinskiTriangle(LveModel::Vertex A, LveModel::Vertex B, LveModel::Vertex C, int Iteration);
 
 		LveWindow lveWindow{ WIDTH, HEIGHT, "Hello Vulkan!" };
 		LveDevice lveDevice{ lveWindow };
@@ -35,5 +38,6 @@ namespace lve {
 		std::unique_ptr<LvePipeline> lvePipeline;
 		VkPipelineLayout pipelineLayout;
 		std::vector<VkCommandBuffer> commandBuffers;
+		std::unique_ptr<LveModel> lveModel;
 	};
 }  // namespace lve

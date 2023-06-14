@@ -7,6 +7,7 @@
 namespace lve {
 
     FirstApp::FirstApp() {
+        loadModels();
         createPipelineLayout();
         createPipeline();
         createCommandBuffers();
@@ -21,6 +22,17 @@ namespace lve {
         }
 
         vkDeviceWaitIdle(lveDevice.device());
+    }
+
+    
+
+    void FirstApp::loadModels()
+    {
+        LveModel::Vertex V1 = { {0.0f, -0.5f} };
+        LveModel::Vertex V2 = { {0.5f, 0.5f} };
+        LveModel::Vertex V3 = { {-0.5f, 0.5f} };
+
+        lveModel = std::make_unique<LveModel>(lveDevice, makeSierpinskiTriangle(V1,V2,V3,1));
     }
 
     void FirstApp::createPipelineLayout() {
@@ -90,7 +102,8 @@ namespace lve {
             vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
             lvePipeline->bind(commandBuffers[i]);
-            vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+            lveModel->bind(commandBuffers[i]);
+            lveModel->draw(commandBuffers[i]);
 
             vkCmdEndRenderPass(commandBuffers[i]);
             if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS) {
@@ -109,6 +122,45 @@ namespace lve {
         if (result != VK_SUCCESS) {
             throw std::runtime_error("failed to present swap chain image!");
         }
+        
+
+     
     }
 
+    std::vector<LveModel::Vertex> FirstApp::makeSierpinskiTriangle(LveModel::Vertex A, LveModel::Vertex B, LveModel::Vertex C, int Iteration)
+    {
+        if (Iteration ==0)
+        {
+            std::vector<LveModel::Vertex> vectors;
+            vectors.push_back(A);
+            vectors.push_back(B);
+            vectors.push_back(C);
+
+            return vectors;
+        }
+
+
+        LveModel::Vertex tmpAB = {{0.0f, 0.0f}};
+        tmpAB.position[0] = 0.5f * A.position[0] + 0.5f * B.position[0];
+        tmpAB.position[1] = 0.5f * A.position[1] + 0.5f * B.position[1];
+        LveModel::Vertex tmpBC = { {0.0f, 0.0f} };;
+        tmpBC.position[0] = 0.5f * B.position[0] + 0.5f * C.position[0];
+        tmpBC.position[1] = 0.5f * B.position[1] + 0.5f * C.position[1];
+        LveModel::Vertex tmpAC = { {0.0f, 0.0f} };;
+        tmpAC.position[0] = 0.5f * A.position[0] + 0.5f * C.position[0];
+        tmpAC.position[1] = 0.5f * A.position[1] + 0.5f * C.position[1];
+
+        std::vector<LveModel::Vertex> tmpVectorA = makeSierpinskiTriangle(A, tmpAB, tmpAC, Iteration-1);
+        std::vector<LveModel::Vertex> tmpVectorB = makeSierpinskiTriangle(tmpAB, tmpBC, B, Iteration-1);
+        std::vector<LveModel::Vertex> tmpVectorC = makeSierpinskiTriangle(tmpAC, C, tmpBC, Iteration-1);
+
+        tmpVectorA.insert(tmpVectorA.end(), tmpVectorB.begin(), tmpVectorB.end());
+        tmpVectorA.insert(tmpVectorA.end(), tmpVectorC.begin(), tmpVectorC.end());
+
+
+        return tmpVectorA;
+    }
+
+   
+    
 }  // namespace lve
