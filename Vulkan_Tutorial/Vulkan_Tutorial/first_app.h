@@ -30,6 +30,7 @@ namespace lve {
 		void createPipeline();
 		void createCommandBuffers();
 		void drawFrame();
+		std::vector<LveModel::Vertex> makeSierpinskiTriangle(LveModel::Vertex A, LveModel::Vertex B, LveModel::Vertex C, int Iteration);
 
 		LveWindow lveWindow{ WIDTH, HEIGHT, "Hello Vulkan!" };
 		LveDevice lveDevice{ lveWindow };
