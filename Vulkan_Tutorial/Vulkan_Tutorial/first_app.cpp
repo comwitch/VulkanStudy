@@ -32,7 +32,13 @@ namespace lve {
         LveModel::Vertex V2 = { {0.5f, 0.5f} };
         LveModel::Vertex V3 = { {-0.5f, 0.5f} };
 
-        lveModel = std::make_unique<LveModel>(lveDevice, makeSierpinskiTriangle(V1,V2,V3,1));
+        std::vector<LveModel::Vertex> vertices{
+            {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+            {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+            {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+        };
+
+        lveModel = std::make_unique<LveModel>(lveDevice, vertices);
     }
 
     void FirstApp::createPipelineLayout() {
