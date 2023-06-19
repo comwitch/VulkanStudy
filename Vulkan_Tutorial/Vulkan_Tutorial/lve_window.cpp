@@ -23,6 +23,13 @@ namespace lve {
 		}
 	}
 
+	void LveWindow::framebufferResizeCallback(GLFWwindow* window, int width, int height)
+	{
+		auto lvewindow = reinterpret_cast<LveWindow*>(glfwGetWindowUserPointer(window));
+		lvewindow->framebufferResized = true;
+		
+	}
+
 	void LveWindow::initWindow()
 	{
 		glfwInit();
