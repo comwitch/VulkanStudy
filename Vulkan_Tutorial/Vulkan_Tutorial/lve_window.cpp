@@ -27,6 +27,8 @@ namespace lve {
 	{
 		auto lvewindow = reinterpret_cast<LveWindow*>(glfwGetWindowUserPointer(window));
 		lvewindow->framebufferResized = true;
+		lvewindow->width = width;
+		lvewindow->height = height;
 		
 	}
 
@@ -34,8 +36,10 @@ namespace lve {
 	{
 		glfwInit();
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
 		window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
+		glfwSetWindowUserPointer(window, this);
+		glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
 	}
 }

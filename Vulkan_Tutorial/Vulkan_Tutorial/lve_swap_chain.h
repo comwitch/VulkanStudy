@@ -6,6 +6,7 @@
 #include <vulkan/vulkan.h>
 
 // std lib headers
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -16,6 +17,7 @@ namespace lve {
         static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
         LveSwapChain(LveDevice& deviceRef, VkExtent2D windowExtent);
+        LveSwapChain(LveDevice& deviceRef, VkExtent2D windowExtent, std::shared_ptr<LveSwapChain> previous);
         ~LveSwapChain();
 
         LveSwapChain(const LveSwapChain&) = delete;
@@ -39,6 +41,7 @@ namespace lve {
         VkResult submitCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex);
 
     private:
+        void init();
         void createSwapChain();
         void createImageViews();
         void createDepthResources();
@@ -58,6 +61,8 @@ namespace lve {
 
         std::vector<VkFramebuffer> swapChainFramebuffers;
         VkRenderPass renderPass;
+
+        std::shared_ptr<LveSwapChain> oldSwapChain;
 
         std::vector<VkImage> depthImages;
         std::vector<VkDeviceMemory> depthImageMemorys;
